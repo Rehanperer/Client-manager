@@ -5,7 +5,6 @@ import {
     Briefcase,
     TrendingUp,
     PieChart as PieChartIcon,
-    Timeline,
     ChevronRight,
     Target,
     ArrowUpRight,
@@ -56,11 +55,11 @@ const Dashboard = () => {
     // Dynamic Forecasting logic (simplified linear growth)
     const forecastData = [
         { name: 'Jan', revenue: 4200, mrr: 800 },
-        { name: 'Feb', revenue: totalRevenue, mrr: mrr },
-        { name: 'Mar', revenue: totalRevenue * 1.15, mrr: mrr * 1.1 },
-        { name: 'Apr', revenue: totalRevenue * 1.3, mrr: mrr * 1.25 },
-        { name: 'May', revenue: totalRevenue * 1.5, mrr: mrr * 1.4 },
-        { name: 'Jun', revenue: totalRevenue * 1.8, mrr: mrr * 1.6 },
+        { name: 'Feb', revenue: totalRevenue || 5000, mrr: mrr || 500 },
+        { name: 'Mar', revenue: (totalRevenue || 5000) * 1.15, mrr: (mrr || 500) * 1.1 },
+        { name: 'Apr', revenue: (totalRevenue || 5000) * 1.3, mrr: (mrr || 500) * 1.25 },
+        { name: 'May', revenue: (totalRevenue || 5000) * 1.5, mrr: (mrr || 500) * 1.4 },
+        { name: 'Jun', revenue: (totalRevenue || 5000) * 1.8, mrr: (mrr || 500) * 1.6 },
     ];
 
     const StatCard = ({ icon, label, value, subtext, color, delay }) => (
@@ -139,7 +138,6 @@ const Dashboard = () => {
             </div>
 
             <div className="content-grid" style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '1.5rem' }}>
-                {/* Main Projection / Forecast Chart */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -182,7 +180,6 @@ const Dashboard = () => {
                     </div>
                 </motion.div>
 
-                {/* Niche Breakdown / Pie Chart */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
