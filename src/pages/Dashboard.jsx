@@ -9,7 +9,8 @@ import {
     Target,
     ArrowUpRight,
     Zap,
-    LayoutDashboard
+    LayoutDashboard,
+    Wallet
 } from 'lucide-react';
 import {
     BarChart,
@@ -43,6 +44,15 @@ const Dashboard = () => {
     const activeProjects = clients.filter(c => c.status !== 'Live').length;
     const avgLTV = clients.length > 0 ? (totalRevenue + (mrr * 12)) / clients.length : 0;
 
+    // LKR Formatter
+    const formatLKR = (val) => {
+        return new Intl.NumberFormat('en-LK', {
+            style: 'currency',
+            currency: 'LKR',
+            maximumFractionDigits: 0
+        }).format(val).replace('LKR', 'Rs.');
+    };
+
     // Revenue by Niche Analysis
     const nicheDataMap = clients.reduce((acc, c) => {
         const niche = c.niche || 'Other';
@@ -52,14 +62,14 @@ const Dashboard = () => {
 
     const nicheData = Object.entries(nicheDataMap).map(([name, value]) => ({ name, value }));
 
-    // Dynamic Forecasting logic (simplified linear growth)
+    // Dynamic Forecasting logic
     const forecastData = [
-        { name: 'Jan', revenue: 4200, mrr: 800 },
-        { name: 'Feb', revenue: totalRevenue || 5000, mrr: mrr || 500 },
-        { name: 'Mar', revenue: (totalRevenue || 5000) * 1.15, mrr: (mrr || 500) * 1.1 },
-        { name: 'Apr', revenue: (totalRevenue || 5000) * 1.3, mrr: (mrr || 500) * 1.25 },
-        { name: 'May', revenue: (totalRevenue || 5000) * 1.5, mrr: (mrr || 500) * 1.4 },
-        { name: 'Jun', revenue: (totalRevenue || 5000) * 1.8, mrr: (mrr || 500) * 1.6 },
+        { name: 'Jan', revenue: totalRevenue * 0.7, mrr: mrr * 0.8 },
+        { name: 'Feb', revenue: totalRevenue, mrr: mrr },
+        { name: 'Mar', revenue: totalRevenue * 1.15, mrr: mrr * 1.1 },
+        { name: 'Apr', revenue: totalRevenue * 1.3, mrr: mrr * 1.25 },
+        { name: 'May', revenue: totalRevenue * 1.5, mrr: mrr * 1.4 },
+        { name: 'Jun', revenue: totalRevenue * 1.8, mrr: mrr * 1.6 },
     ];
 
     const StatCard = ({ icon, label, value, subtext, color, delay }) => (
@@ -85,7 +95,7 @@ const Dashboard = () => {
                 <div style={{ color: color }}>{icon}</div>
                 <span style={{ fontSize: '0.8rem', color: 'var(--text-dim)', fontWeight: 500 }}>{label}</span>
             </div>
-            <h2 style={{ marginBottom: '0.25rem', fontSize: '1.5rem', fontWeight: 700 }}>{value}</h2>
+            <h2 style={{ marginBottom: '0.25rem', fontSize: '1.25rem', fontWeight: 700 }}>{value}</h2>
             <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: 'var(--accent)' }}>
                 <ArrowUpRight size={14} />
                 <span>{subtext}</span>
@@ -103,8 +113,8 @@ const Dashboard = () => {
         >
             <header className="page-header" style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '1rem' }}>
                 <div>
-                    <h1 style={{ marginBottom: '0.25rem', fontSize: '1.75rem' }}>Analytics Engine</h1>
-                    <p style={{ fontSize: '0.9rem' }}>Project performance and financial forecasting.</p>
+                    <h1 style={{ marginBottom: '0.25rem', fontSize: '1.75rem' }}>Business Overview</h1>
+                    <p style={{ fontSize: '0.9rem' }}>Financial performance in LKR (Rs.)</p>
                 </div>
 
                 <div className="glass" style={{ padding: '4px', borderRadius: '12px', display: 'flex' }}>
@@ -130,11 +140,11 @@ const Dashboard = () => {
                 </div>
             </header>
 
-            <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
-                <StatCard icon={<DollarSign size={20} />} label="Gross Revenue" value={`$${totalRevenue.toLocaleString()}`} subtext="+18% growth" color="#3b82f6" delay={0.1} />
-                <StatCard icon={<TrendingUp size={20} />} label="Current MRR" value={`$${mrr.toLocaleString()}`} subtext="Recurring health" color="#10b981" delay={0.2} />
-                <StatCard icon={<Zap size={20} />} label="Customer LTV" value={`$${Math.round(avgLTV).toLocaleString()}`} subtext="Life-time value" color="#8b5cf6" delay={0.3} />
-                <StatCard icon={<Target size={20} />} label="Pipeline" value={activeProjects} subtext="Active builds" color="#f59e0b" delay={0.4} />
+            <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
+                <StatCard icon={<Wallet size={20} />} label="Gross Revenue" value={formatLKR(totalRevenue)} subtext="+12% vs last mo" color="#3b82f6" delay={0.1} />
+                <StatCard icon={<TrendingUp size={20} />} label="Monthly MRR" value={formatLKR(mrr)} subtext="Active recurring" color="#10b981" delay={0.2} />
+                <StatCard icon={<Zap size={20} />} label="Customer LTV" value={formatLKR(avgLTV)} subtext="Projected value" color="#8b5cf6" delay={0.3} />
+                <StatCard icon={<Target size={20} />} label="Pipeline" value={`${activeProjects} Builds`} subtext="In progress" color="#f59e0b" delay={0.4} />
             </div>
 
             <div className="content-grid" style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '1.5rem' }}>
@@ -148,7 +158,7 @@ const Dashboard = () => {
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                         <div>
                             <h3 style={{ fontSize: '1.1rem' }}>Growth Projections</h3>
-                            <p style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>Expected revenue curve for H1 2024</p>
+                            <p style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>Revenue forecast in LKR (Rs.)</p>
                         </div>
                         <div className="badge badge-success" style={{ padding: '4px 12px' }}>FORECASTING ON</div>
                     </div>
@@ -168,8 +178,9 @@ const Dashboard = () => {
                                 </defs>
                                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
                                 <XAxis dataKey="name" stroke="var(--text-dim)" fontSize={12} tickLine={false} axisLine={false} />
-                                <YAxis stroke="var(--text-dim)" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(v) => `$${v}`} />
+                                <YAxis stroke="var(--text-dim)" fontSize={10} tickLine={false} axisLine={false} tickFormatter={(v) => `Rs.${v / 1000}k`} />
                                 <Tooltip
+                                    formatter={(value) => formatLKR(value)}
                                     contentStyle={{ background: 'var(--bg-sidebar)', border: '1px solid var(--border)', borderRadius: '12px', backdropFilter: 'blur(10px)' }}
                                 />
                                 <Area type="monotone" dataKey="revenue" stroke="#3b82f6" fillOpacity={1} fill="url(#colorRev)" strokeWidth={3} />
@@ -206,6 +217,7 @@ const Dashboard = () => {
                                     ))}
                                 </Pie>
                                 <Tooltip
+                                    formatter={(value) => formatLKR(value)}
                                     contentStyle={{ background: 'var(--bg-sidebar)', border: '1px solid var(--border)', borderRadius: '12px' }}
                                 />
                             </PieChart>
@@ -218,7 +230,7 @@ const Dashboard = () => {
                                     <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: COLORS[i % COLORS.length] }}></div>
                                     <span>{item.name}</span>
                                 </div>
-                                <span style={{ fontWeight: 600, fontSize: '0.85rem' }}>${item.value.toLocaleString()}</span>
+                                <span style={{ fontWeight: 600, fontSize: '0.85rem' }}>{formatLKR(item.value)}</span>
                             </div>
                         ))}
                     </div>
@@ -241,6 +253,9 @@ const Dashboard = () => {
           }
           .dashboard-container h1 {
             font-size: 1.5rem !important;
+          }
+          .stats-grid h2 {
+            font-size: 1.1rem !important;
           }
         }
       `}} />
