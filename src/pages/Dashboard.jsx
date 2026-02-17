@@ -10,7 +10,9 @@ import {
     ArrowUpRight,
     Zap,
     LayoutDashboard,
-    Wallet
+    Wallet,
+    Receipt,
+    MinusCircle
 } from 'lucide-react';
 import {
     BarChart,
@@ -41,6 +43,12 @@ const Dashboard = () => {
 
     const totalRevenue = clients.reduce((acc, c) => acc + (c.price || 0), 0);
     const mrr = clients.reduce((acc, c) => acc + (c.recurring || 0), 0);
+    const totalExpenses = clients.reduce((acc, c) => {
+        const clientExpenses = (c.expenses || []).reduce((sum, exp) => sum + exp.amount, 0);
+        return acc + clientExpenses;
+    }, 0);
+    const netProfit = totalRevenue - totalExpenses;
+
     const activeProjects = clients.filter(c => c.status !== 'Live').length;
     const avgLTV = clients.length > 0 ? (totalRevenue + (mrr * 12)) / clients.length : 0;
 
@@ -62,14 +70,14 @@ const Dashboard = () => {
 
     const nicheData = Object.entries(nicheDataMap).map(([name, value]) => ({ name, value }));
 
-    // Dynamic Forecasting logic
+    // Dynamic Forecasting logic (using profit as well)
     const forecastData = [
-        { name: 'Jan', revenue: totalRevenue * 0.7, mrr: mrr * 0.8 },
-        { name: 'Feb', revenue: totalRevenue, mrr: mrr },
-        { name: 'Mar', revenue: totalRevenue * 1.15, mrr: mrr * 1.1 },
-        { name: 'Apr', revenue: totalRevenue * 1.3, mrr: mrr * 1.25 },
-        { name: 'May', revenue: totalRevenue * 1.5, mrr: mrr * 1.4 },
-        { name: 'Jun', revenue: totalRevenue * 1.8, mrr: mrr * 1.6 },
+        { name: 'Jan', revenue: totalRevenue * 0.7, expenses: totalExpenses * 0.8, profit: (totalRevenue * 0.7) - (totalExpenses * 0.8) },
+        { name: 'Feb', revenue: totalRevenue, expenses: totalExpenses, profit: netProfit },
+        { name: 'Mar', revenue: totalRevenue * 1.15, expenses: totalExpenses * 1.05, profit: (totalRevenue * 1.15) - (totalExpenses * 1.05) },
+        { name: 'Apr', revenue: totalRevenue * 1.3, expenses: totalExpenses * 1.1, profit: (totalRevenue * 1.3) - (totalExpenses * 1.1) },
+        { name: 'May', revenue: totalRevenue * 1.5, expenses: totalExpenses * 1.2, profit: (totalRevenue * 1.5) - (totalExpenses * 1.2) },
+        { name: 'Jun', revenue: totalRevenue * 1.8, expenses: totalExpenses * 1.4, profit: (totalRevenue * 1.8) - (totalExpenses * 1.4) },
     ];
 
     const StatCard = ({ icon, label, value, subtext, color, delay }) => (
@@ -96,8 +104,8 @@ const Dashboard = () => {
                 <span style={{ fontSize: '0.8rem', color: 'var(--text-dim)', fontWeight: 500 }}>{label}</span>
             </div>
             <h2 style={{ marginBottom: '0.25rem', fontSize: '1.25rem', fontWeight: 700 }}>{value}</h2>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: 'var(--accent)' }}>
-                <ArrowUpRight size={14} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: subtext.startsWith('-') ? 'var(--danger)' : 'var(--accent)' }}>
+                <ArrowUpRight size={14} style={{ transform: subtext.startsWith('-') ? 'rotate(90deg)' : 'none' }} />
                 <span>{subtext}</span>
             </div>
         </motion.div>
@@ -113,8 +121,8 @@ const Dashboard = () => {
         >
             <header className="page-header" style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '1rem' }}>
                 <div>
-                    <h1 style={{ marginBottom: '0.25rem', fontSize: '1.75rem' }}>Business Overview</h1>
-                    <p style={{ fontSize: '0.9rem' }}>Financial performance in LKR (Rs.)</p>
+                    <h1 style={{ marginBottom: '0.25rem', fontSize: '1.75rem' }}>Management Dashboard</h1>
+                    <p style={{ fontSize: '0.9rem' }}>Financial health overview in LKR</p>
                 </div>
 
                 <div className="glass" style={{ padding: '4px', borderRadius: '12px', display: 'flex' }}>
@@ -141,10 +149,10 @@ const Dashboard = () => {
             </header>
 
             <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
-                <StatCard icon={<Wallet size={20} />} label="Gross Revenue" value={formatLKR(totalRevenue)} subtext="+12% vs last mo" color="#3b82f6" delay={0.1} />
-                <StatCard icon={<TrendingUp size={20} />} label="Monthly MRR" value={formatLKR(mrr)} subtext="Active recurring" color="#10b981" delay={0.2} />
-                <StatCard icon={<Zap size={20} />} label="Customer LTV" value={formatLKR(avgLTV)} subtext="Projected value" color="#8b5cf6" delay={0.3} />
-                <StatCard icon={<Target size={20} />} label="Pipeline" value={`${activeProjects} Builds`} subtext="In progress" color="#f59e0b" delay={0.4} />
+                <StatCard icon={<Wallet size={20} />} label="Total Revenue" value={formatLKR(totalRevenue)} subtext="+12% growth" color="#3b82f6" delay={0.1} />
+                <StatCard icon={<Receipt size={20} />} label="Operational Costs" value={formatLKR(totalExpenses)} subtext="Expenses tracked" color="#ef4444" delay={0.2} />
+                <StatCard icon={<TrendingUp size={20} />} label="Net Profit" value={formatLKR(netProfit)} subtext="Actual earnings" color="#10b981" delay={0.3} />
+                <StatCard icon={<Zap size={20} />} label="LTV Forecast" value={formatLKR(avgLTV)} subtext="Projected avg." color="#8b5cf6" delay={0.4} />
             </div>
 
             <div className="content-grid" style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '1.5rem' }}>
@@ -157,10 +165,10 @@ const Dashboard = () => {
                 >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                         <div>
-                            <h3 style={{ fontSize: '1.1rem' }}>Growth Projections</h3>
-                            <p style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>Revenue forecast in LKR (Rs.)</p>
+                            <h3 style={{ fontSize: '1.1rem' }}>Profit vs Revenue Curve</h3>
+                            <p style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>Net earnings projection</p>
                         </div>
-                        <div className="badge badge-success" style={{ padding: '4px 12px' }}>FORECASTING ON</div>
+                        <div className="badge badge-success" style={{ padding: '4px 12px' }}>LIVE ANALYTICS</div>
                     </div>
 
                     <div style={{ width: '100%', height: '300px' }}>
@@ -171,7 +179,7 @@ const Dashboard = () => {
                                         <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
                                         <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
                                     </linearGradient>
-                                    <linearGradient id="colorMRR" x1="0" y1="0" x2="0" y2="1">
+                                    <linearGradient id="colorProfit" x1="0" y1="0" x2="0" y2="1">
                                         <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
                                         <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
                                     </linearGradient>
@@ -184,7 +192,7 @@ const Dashboard = () => {
                                     contentStyle={{ background: 'var(--bg-sidebar)', border: '1px solid var(--border)', borderRadius: '12px', backdropFilter: 'blur(10px)' }}
                                 />
                                 <Area type="monotone" dataKey="revenue" stroke="#3b82f6" fillOpacity={1} fill="url(#colorRev)" strokeWidth={3} />
-                                <Area type="monotone" dataKey="mrr" stroke="#10b981" fillOpacity={1} fill="url(#colorMRR)" strokeWidth={2} />
+                                <Area type="monotone" dataKey="profit" stroke="#10b981" fillOpacity={1} fill="url(#colorProfit)" strokeWidth={2} />
                                 <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px' }} />
                             </AreaChart>
                         </ResponsiveContainer>
@@ -198,7 +206,7 @@ const Dashboard = () => {
                     className="glass pie-chart-box"
                     style={{ padding: '1.5rem', minHeight: '400px' }}
                 >
-                    <h3 style={{ fontSize: '1.1rem', marginBottom: '1.5rem' }}>Niche Performance</h3>
+                    <h3 style={{ fontSize: '1.1rem', marginBottom: '1.5rem' }}>Revenue Breakdown</h3>
                     <div style={{ width: '100%', height: '240px' }}>
                         <ResponsiveContainer width="100%" height="100%">
                             <PieChart>

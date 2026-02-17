@@ -6,7 +6,9 @@ import {
     PlusCircle,
     LayoutDashboard,
     Settings,
-    Globe
+    Globe,
+    Receipt,
+    History
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -14,6 +16,8 @@ const Sidebar = () => {
         { icon: <LayoutDashboard size={20} />, label: 'Dashboard', path: '/' },
         { icon: <Users size={20} />, label: 'Clients', path: '/clients' },
         { icon: <PlusCircle size={20} />, label: 'Add Client', path: '/add' },
+        { icon: <History size={20} />, label: 'Timeline', path: '/timeline' },
+        { icon: <Receipt size={20} />, label: 'Expenses', path: '/expenses' },
         { icon: <BarChart3 size={20} />, label: 'Analytics', path: '/analytics' },
     ];
 

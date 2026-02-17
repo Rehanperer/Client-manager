@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import Sidebar from './Sidebar';
 import {
     LayoutDashboard,
     Users,
     PlusCircle,
     BarChart3,
-    Menu,
-    X,
-    Bell
+    Bell,
+    Receipt,
+    History
 } from 'lucide-react';
 
 const Layout = ({ children }) => {
@@ -24,6 +25,8 @@ const Layout = ({ children }) => {
         { icon: <LayoutDashboard size={24} />, label: 'Home', path: '/' },
         { icon: <Users size={24} />, label: 'Clients', path: '/clients' },
         { icon: <PlusCircle size={24} />, label: 'Add', path: '/add' },
+        { icon: <History size={24} />, label: 'Timeline', path: '/timeline' },
+        { icon: <Receipt size={24} />, label: 'Bill', path: '/expenses' },
         { icon: <BarChart3 size={24} />, label: 'Data', path: '/analytics' },
     ];
 
@@ -123,7 +126,6 @@ const Layout = ({ children }) => {
                 ))}
             </nav>
 
-            {/* Global CSS for Mobile Transformation */}
             <style dangerouslySetInnerHTML={{
                 __html: `
         @media (max-width: 768px) {
@@ -140,9 +142,5 @@ const Layout = ({ children }) => {
         </div>
     );
 };
-
-// Simple motion wrapper just in case framer-motion isn't available in this specific direct import context
-// Though it is installed and used elsewhere.
-import { motion } from 'framer-motion';
 
 export default Layout;

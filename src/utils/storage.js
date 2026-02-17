@@ -42,7 +42,16 @@ export const initMockData = () => {
                 recurring: 15000,
                 domain: 'techflow.io',
                 niche: 'SaaS',
-                date: '2024-02-10'
+                date: '2024-02-10',
+                finalDeadline: '2024-06-01',
+                expenses: [
+                    { id: 'e1', type: 'Hosting', amount: 5000, date: '2024-02-12', note: 'Vercel Pro' },
+                    { id: 'e2', type: 'Domain', amount: 3500, date: '2024-02-11', note: 'Namecheap' }
+                ],
+                timeline: [
+                    { id: 't1', stage: 'Discovery', startDate: '2024-02-10', endDate: '2024-02-15', status: 'Completed', notes: 'Requirement gathering' },
+                    { id: 't2', stage: 'Design', startDate: '2024-02-16', endDate: '2024-03-01', status: 'In Progress', notes: 'High-fidelity mockups' }
+                ]
             },
             {
                 id: '2',
@@ -59,7 +68,17 @@ export const initMockData = () => {
                 recurring: 25000,
                 domain: 'oceanic-resorts.com',
                 niche: 'Travel',
-                date: '2024-01-15'
+                date: '2024-01-15',
+                finalDeadline: '2024-04-15',
+                expenses: [
+                    { id: 'e3', type: 'Premium Plugin', amount: 12000, date: '2024-01-16', note: 'WP Rocket' }
+                ],
+                timeline: [
+                    { id: 't3', stage: 'Discovery', startDate: '2024-01-15', endDate: '2024-01-20', status: 'Completed' },
+                    { id: 't4', stage: 'Design', startDate: '2024-01-21', endDate: '2024-02-05', status: 'Completed' },
+                    { id: 't5', stage: 'Development', startDate: '2024-02-06', endDate: '2024-02-28', status: 'Completed' },
+                    { id: 't6', stage: 'Launch', startDate: '2024-03-01', endDate: '2024-03-01', status: 'Completed' }
+                ]
             }
         ];
         localStorage.setItem(STORAGE_KEY, JSON.stringify(mockClients));
