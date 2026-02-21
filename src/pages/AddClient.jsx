@@ -104,15 +104,24 @@ const AddClient = () => {
         date: new Date().toISOString().split('T')[0]
     });
 
+    const [error, setError] = useState(null);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setStep(5); // Show loading or final step
-        await saveClient({
-            ...formData,
-            price: parseFloat(formData.price) || 0,
-            recurring: parseFloat(formData.recurring) || 0
-        });
-        navigate('/clients');
+        setError(null);
+        setStep(5); // Show loading
+        try {
+            await saveClient({
+                ...formData,
+                price: parseFloat(formData.price) || 0,
+                recurring: parseFloat(formData.recurring) || 0
+            });
+            navigate('/clients');
+        } catch (err) {
+            console.error('Failed to save client:', err);
+            setError(err.message || 'Failed to save client. Please check your connection.');
+            setStep(4); // Go back to last step to allow retry
+        }
     };
 
     const handleChange = (e) => {
@@ -149,6 +158,11 @@ const AddClient = () => {
             </div>
 
             <form onSubmit={handleSubmit}>
+                {error && (
+                    <div style={{ padding: '1rem', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid #ef4444', borderRadius: '12px', color: '#ef4444', marginBottom: '1.5rem', fontSize: '0.9rem' }}>
+                        {error}
+                    </div>
+                )}
                 <div className="form-content" style={{ minHeight: '380px' }}>
                     <AnimatePresence mode="wait">
                         {step === 1 && (
