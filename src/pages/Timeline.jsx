@@ -51,7 +51,11 @@ const Timeline = () => {
     };
 
     useEffect(() => {
-        setClients(getClients());
+        const fetchClients = async () => {
+            const data = await getClients();
+            setClients(data);
+        };
+        fetchClients();
     }, []);
 
     const filteredClients = clients.filter(c =>
@@ -69,7 +73,7 @@ const Timeline = () => {
         return days > 0 ? days : 0;
     };
 
-    const handleAddStage = (e) => {
+    const handleAddStage = async (e) => {
         e.preventDefault();
         const clientToUpdate = clients.find(c => c.id === activeClient.id);
         const stageData = {
@@ -82,8 +86,8 @@ const Timeline = () => {
             timeline: [...(clientToUpdate.timeline || []), stageData].sort((a, b) => new Date(a.startDate) - new Date(b.startDate))
         };
 
-        saveClient(updatedClient);
-        updateLocalState(activeClient.id);
+        await saveClient(updatedClient);
+        await updateLocalState(activeClient.id);
         setShowAddForm(false);
         setNewStage({
             stage: 'Development',
@@ -94,23 +98,23 @@ const Timeline = () => {
         });
     };
 
-    const updateLocalState = (clientId) => {
-        const updatedClients = getClients();
+    const updateLocalState = async (clientId) => {
+        const updatedClients = await getClients();
         setClients(updatedClients);
         setActiveClient(updatedClients.find(c => c.id === clientId));
     };
 
-    const handleUpdateDeadline = (newDate) => {
+    const handleUpdateDeadline = async (newDate) => {
         const updatedClient = { ...activeClient, finalDeadline: newDate };
-        saveClient(updatedClient);
-        updateLocalState(activeClient.id);
+        await saveClient(updatedClient);
+        await updateLocalState(activeClient.id);
     };
 
-    const removeStage = (stageId) => {
+    const removeStage = async (stageId) => {
         const updatedTimeline = activeClient.timeline.filter(s => s.id !== stageId);
         const updatedClient = { ...activeClient, timeline: updatedTimeline };
-        saveClient(updatedClient);
-        updateLocalState(activeClient.id);
+        await saveClient(updatedClient);
+        await updateLocalState(activeClient.id);
     };
 
     const isDeadlineSoon = (date) => {

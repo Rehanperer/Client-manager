@@ -38,7 +38,11 @@ const Dashboard = () => {
     const [activeTab, setActiveTab] = useState('overview');
 
     useEffect(() => {
-        setClients(getClients());
+        const fetchClients = async () => {
+            const data = await getClients();
+            setClients(data);
+        };
+        fetchClients();
     }, []);
 
     const totalRevenue = clients.reduce((acc, c) => acc + (c.price || 0), 0);

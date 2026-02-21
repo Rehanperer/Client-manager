@@ -12,8 +12,8 @@ export default defineConfig({
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
       manifest: {
         name: 'Client Manager Pro',
-        short_name: 'ClientMgr',
-        description: 'Manage clients, revenue, and project status for website business.',
+        short_name: 'ClientPro',
+        description: 'Elite Client Relationship Management with Offline Support',
         theme_color: '#0f172a',
         background_color: '#0f172a',
         display: 'standalone',

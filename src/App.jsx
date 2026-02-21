@@ -7,6 +7,10 @@ import Expenses from './pages/Expenses';
 import Timeline from './pages/Timeline';
 import { useEffect } from 'react';
 import { initMockData } from './utils/storage';
+import { AuthProvider } from './context/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
+import Login from './pages/Login';
+import Signup from './pages/Signup';
 
 function App() {
   useEffect(() => {
@@ -14,19 +18,28 @@ function App() {
   }, []);
 
   return (
-    <Router>
-      <Layout>
+    <AuthProvider>
+      <Router>
         <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/clients" element={<Clients />} />
-          <Route path="/add" element={<AddClient />} />
-          <Route path="/expenses" element={<Expenses />} />
-          <Route path="/timeline" element={<Timeline />} />
-          <Route path="/analytics" element={<Dashboard />} /> {/* Using Dashboard as analytics for now */}
-          {/* Add more routes here */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/*" element={
+            <ProtectedRoute>
+              <Layout>
+                <Routes>
+                  <Route path="/" element={<Dashboard />} />
+                  <Route path="/clients" element={<Clients />} />
+                  <Route path="/add" element={<AddClient />} />
+                  <Route path="/expenses" element={<Expenses />} />
+                  <Route path="/timeline" element={<Timeline />} />
+                  <Route path="/analytics" element={<Dashboard />} />
+                </Routes>
+              </Layout>
+            </ProtectedRoute>
+          } />
         </Routes>
-      </Layout>
-    </Router>
+      </Router>
+    </AuthProvider>
   );
 }
 

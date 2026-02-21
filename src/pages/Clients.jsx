@@ -25,8 +25,9 @@ const Clients = () => {
     const [isDeleting, setIsDeleting] = useState(null);
     const navigate = useNavigate();
 
-    const refreshClients = () => {
-        setClients(getClients());
+    const refreshClients = async () => {
+        const data = await getClients();
+        setClients(data);
     };
 
     useEffect(() => {
@@ -48,9 +49,9 @@ const Clients = () => {
         return matchesSearch && matchesFilter;
     });
 
-    const handleDelete = (id) => {
-        deleteClient(id);
-        refreshClients();
+    const handleDelete = async (id) => {
+        await deleteClient(id);
+        await refreshClients();
         setIsDeleting(null);
     };
 

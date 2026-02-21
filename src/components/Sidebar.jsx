@@ -8,10 +8,15 @@ import {
     Settings,
     Globe,
     Receipt,
-    History
+    History,
+    LogOut
 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const Sidebar = () => {
+    const { signOut } = useAuth();
+    const navigate = useNavigate();
     const navItems = [
         { icon: <LayoutDashboard size={20} />, label: 'Dashboard', path: '/' },
         { icon: <Users size={20} />, label: 'Clients', path: '/clients' },
@@ -84,7 +89,7 @@ const Sidebar = () => {
                 ))}
             </nav>
 
-            <div className="sidebar-footer">
+            <div className="sidebar-footer" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 <NavLink
                     to="/settings"
                     style={({ isActive }) => ({
@@ -101,6 +106,31 @@ const Sidebar = () => {
                     <Settings size={20} />
                     <span>Settings</span>
                 </NavLink>
+
+                <button
+                    onClick={async () => {
+                        await signOut();
+                        navigate('/login');
+                    }}
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '1rem',
+                        padding: '0.875rem 1rem',
+                        color: 'var(--danger)',
+                        background: 'transparent',
+                        border: 'none',
+                        fontSize: '0.9rem',
+                        cursor: 'pointer',
+                        width: '100%',
+                        textAlign: 'left',
+                        transition: 'var(--transition)'
+                    }}
+                    className="nav-link logout-btn"
+                >
+                    <LogOut size={20} />
+                    <span>Logout</span>
+                </button>
             </div>
         </div>
     );

@@ -31,7 +31,11 @@ const Expenses = () => {
     const categories = ['Hosting', 'Domain', 'Premium Plugin', 'API Feed', 'Outsourcing', 'Ad Spend', 'Custom'];
 
     useEffect(() => {
-        setClients(getClients());
+        const fetchClients = async () => {
+            const data = await getClients();
+            setClients(data);
+        };
+        fetchClients();
     }, []);
 
     const formatLKR = (val) => {
@@ -46,7 +50,7 @@ const Expenses = () => {
         c.name.toLowerCase().includes(search.toLowerCase())
     );
 
-    const handleAddExpense = (e) => {
+    const handleAddExpense = async (e) => {
         e.preventDefault();
         const clientToUpdate = clients.find(c => c.id === activeClient.id);
         const expenseData = {
@@ -62,8 +66,8 @@ const Expenses = () => {
             expenses: [...(clientToUpdate.expenses || []), expenseData]
         };
 
-        saveClient(updatedClient);
-        const updatedClients = getClients();
+        await saveClient(updatedClient);
+        const updatedClients = await getClients();
         setClients(updatedClients);
         setActiveClient(updatedClients.find(c => c.id === activeClient.id));
         setShowAddForm(false);
@@ -76,11 +80,11 @@ const Expenses = () => {
         });
     };
 
-    const removeExpense = (expenseId) => {
+    const removeExpense = async (expenseId) => {
         const updatedExpenses = activeClient.expenses.filter(e => e.id !== expenseId);
         const updatedClient = { ...activeClient, expenses: updatedExpenses };
-        saveClient(updatedClient);
-        const updatedClients = getClients();
+        await saveClient(updatedClient);
+        const updatedClients = await getClients();
         setClients(updatedClients);
         setActiveClient(updatedClients.find(c => c.id === activeClient.id));
     };

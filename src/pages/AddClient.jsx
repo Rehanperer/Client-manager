@@ -104,9 +104,10 @@ const AddClient = () => {
         date: new Date().toISOString().split('T')[0]
     });
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        saveClient({
+        setStep(5); // Show loading or final step
+        await saveClient({
             ...formData,
             price: parseFloat(formData.price) || 0,
             recurring: parseFloat(formData.recurring) || 0
